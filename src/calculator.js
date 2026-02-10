@@ -8,6 +8,9 @@
  * - Subtraction (-)
  * - Multiplication (*)
  * - Division (/)
+ * - Modulo (%)
+ * - Exponentiation (^)
+ * - Square Root (sqrt)
  */
 
 // Addition
@@ -33,6 +36,27 @@ function divide(a, b) {
   return a / b;
 }
 
+// Modulo
+function modulo(a, b) {
+  if (b === 0) {
+    throw new Error('Cannot perform modulo with zero');
+  }
+  return a % b;
+}
+
+// Exponentiation
+function power(base, exponent) {
+  return Math.pow(base, exponent);
+}
+
+// Square Root
+function squareRoot(n) {
+  if (n < 0) {
+    throw new Error('Cannot calculate square root of a negative number');
+  }
+  return Math.sqrt(n);
+}
+
 function calculate(num1, operation, num2) {
   switch (operation) {
     case '+':
@@ -43,18 +67,42 @@ function calculate(num1, operation, num2) {
       return multiply(num1, num2);
     case '/':
       return divide(num1, num2);
+    case '%':
+      return modulo(num1, num2);
+    case '^':
+      return power(num1, num2);
+    case 'sqrt':
+      return squareRoot(num1);
     default:
-      throw new Error('Invalid operation. Use +, -, *, or /');
+      throw new Error('Invalid operation. Use +, -, *, /, %, ^, or sqrt');
   }
 }
 
 function calculator() {
   const args = process.argv.slice(2);
   
-  if (args.length !== 3) {
+  if (args.length < 2 || args.length > 3) {
     console.log('Usage: node calculator.js <number1> <operation> <number2>');
-    console.log('Operations: +, -, *, /');
+    console.log('       node calculator.js sqrt <number>');
+    console.log('Operations: +, -, *, /, %, ^, sqrt');
     process.exit(1);
+  }
+
+  // Handle sqrt special case
+  if (args[0] === 'sqrt') {
+    const num = parseFloat(args[1]);
+    if (isNaN(num)) {
+      console.log('Error: Please provide a valid number');
+      process.exit(1);
+    }
+    try {
+      const result = squareRoot(num);
+      console.log(`sqrt(${num}) = ${result}`);
+    } catch (error) {
+      console.log(`Error: ${error.message}`);
+      process.exit(1);
+    }
+    return;
   }
 
   const num1 = parseFloat(args[0]);
@@ -77,7 +125,7 @@ function calculator() {
 
 // Export functions for testing
 if (typeof module !== 'undefined' && module.exports) {
-  module.exports = { add, subtract, multiply, divide, calculate };
+  module.exports = { add, subtract, multiply, divide, modulo, power, squareRoot, calculate };
 }
 
 // Run calculator if this is the main module
